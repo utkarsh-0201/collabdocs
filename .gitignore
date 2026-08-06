@@ -1,0 +1,17 @@
+# Python environment
+collab_docs_env/
+.env
+
+# Django files
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+
+# Database
+*.sqlite3
+
+# IDE / editor
+.vscode/
+.idea/
