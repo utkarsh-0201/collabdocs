@@ -142,6 +142,51 @@ docker volume rm collabdocs_pgdata       # wipe all data (fresh start)
 - **Migrations.** Run `makemigrations <app_name>` scoped to your own app. If you hit a migration numbering conflict after pulling `main`, delete your unmerged migration and regenerate it — never hand-edit migration numbers.
 - **Commit migration files.** Migrations are part of the source code and must be committed, not gitignored.
 
+## API overview
+
+The project exposes REST endpoints under the `/api/` prefix.
+
+### Workspaces
+- `GET /api/workspaces/` — list workspaces
+- `POST /api/workspaces/` — create a workspace
+- `GET /api/workspaces/<id>/` — workspace detail
+- `GET /api/workspaces/<id>/members/` — list workspace members
+- `POST /api/workspaces/<id>/members/` — add a member
+- `GET /api/workspaces/<id>/summary/` — workspace summary counts
+
+### Documents
+- `GET /api/documents/` — list/filter documents
+- `POST /api/documents/` — create a document with initial version
+- `GET /api/documents/<id>/` — document detail
+- `PUT /api/documents/<id>/` — update document and append a new version
+- `GET /api/documents/<id>/versions/` — list document versions
+- `GET /api/documents/<id>/stats/` — version/comment/contributor statistics
+- `POST /api/documents/<id>/tags/` — attach tags to a document
+
+### Comments
+- `GET /api/comments/` — list threaded comments for a document
+- `POST /api/comments/` — create a top-level comment or reply
+
+### Tags
+- `POST /api/tags/` — create a tag
+
+### Audit logs
+- `GET /api/audit-logs/` — list audit entries with actor/date filtering
+
+### Request logging middleware
+The project includes a custom request logger in `config/middleware.py`, registered in `config/settings.py`.
+It prints one line per request with:
+- HTTP method
+- request path
+- response status code
+- elapsed time in milliseconds
+
+Example:
+
+```text
+METHOD: GET | PATH: /api/workspaces/ | STATUS: 200 | TIME: 12.34 ms
+```
+
 ## Useful commands
 
 ```bash
