@@ -12,6 +12,14 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     lookup_field = 'id'
 
+    def list(self, request, *args, **kwargs):
+        uid = request.query_params.get('uid')
+        if uid:
+            user = get_object_or_404(User, id=uid)
+            serializer = self.get_serializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return super().list(request, *args, **kwargs)
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
@@ -51,3 +59,18 @@ class UserViewSet(viewsets.ModelViewSet):
         user = get_object_or_404(User, email__iexact=email)
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='by-uid')
+    def by_uid(self, request):
+        uid = request.query_params.get('uid')
+        if not uid:
+            return Response(
+                {'detail': 'UID query parameter is required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = get_object_or_404(User, id=uid)
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
