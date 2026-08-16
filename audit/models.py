@@ -1,23 +1,20 @@
 import uuid
 from django.db import models
+
 from accounts.models import User
 
 
 class AuditLog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    actor = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='audit_logs',
-    )
-    action = models.CharField(max_length=50)
-    model_name = models.CharField(max_length=100)
-    object_id = models.CharField(max_length=100)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    actor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='audit_logs')
+    action = models.CharField(max_length=100)
+    target_type = models.CharField(max_length=100)
+    target_id = models.CharField(max_length=255, null=True, blank=True)
+    metadata = models.JSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.action} {self.model_name}({self.object_id}) by {self.actor}"
+        return f'{self.action} {self.target_type}({self.target_id}) by {self.actor}'
 
     class Meta:
         db_table = 'audit_log'

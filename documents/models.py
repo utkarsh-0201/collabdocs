@@ -12,7 +12,7 @@ class Document(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = models.TextField(default='', blank=True)
     workspace = models.ForeignKey(
         Workspace,
         on_delete=models.CASCADE,
@@ -25,6 +25,7 @@ class Document(models.Model):
         related_name='created_documents',
     )
     status = models.CharField(max_length=20, choices=Status.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -41,15 +42,15 @@ class DocumentVersion(models.Model):
         on_delete=models.CASCADE,
         related_name='versions',
     )
-    content = models.TextField()
     version_number = models.PositiveIntegerField()
-    saved_by = models.ForeignKey(
+    content = models.TextField()
+    created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
         related_name='document_versions',
     )
-    saved_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.document} v{self.version_number}"

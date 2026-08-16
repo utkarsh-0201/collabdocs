@@ -42,7 +42,12 @@ class WorkspaceMember(models.Model):
     joined_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('workspace', 'user')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['workspace', 'user'],
+                name='unique_workspace_member',
+            )
+        ]
         db_table = 'workspace_member'
 
     def __str__(self):
